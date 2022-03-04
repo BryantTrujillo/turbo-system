@@ -1,7 +1,21 @@
 const mongoose = require('mongoose');
 const Schema = mongoose.Schema;
 
-const shopSchema = new Schema(
+const ratingSchema = new Schema(
+  {
+    rating: {
+      type: Number,
+      required: true,
+      min: 1,
+      max: 5,
+    },
+  },
+  {
+    timestamps: true,
+  }
+);
+
+const entitySchema = new Schema(
   {
     name: {
       type: String,
@@ -29,6 +43,7 @@ const shopSchema = new Schema(
       type: String,
       required: true,
     },
+    rating: [ratingSchema],
     phone: {
       type: Number,
       required: true,
@@ -189,5 +204,5 @@ const shopSchema = new Schema(
   }
 );
 
-const Shop = mongoose.model('Shop', shopSchema);
-module.exports = Shop;
+const Entity = mongoose.model('Entity', entitySchema);
+module.exports = Entity;

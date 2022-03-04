@@ -1,4 +1,10 @@
 {
+  "name": "portfolio-project",
+  "version": "0.0.0",
+  "private": true,
+  "scripts": {
+    "start": "nodemon app"
+  },
   "dependencies": {
     "body-parser": "^1.19.2",
     "errorhandler": "^1.5.1",
