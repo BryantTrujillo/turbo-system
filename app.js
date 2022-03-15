@@ -1,15 +1,18 @@
 const express = require('express');
 const path = require('path');
 
-const app = express();
+const config = require('./config');
 
 // Additional Express middleware
 const logger = require('morgan');
 const createError = require('http-errors');
 // const errorHandler = require('errorhandler')
 // -- opted to use 'http-errors' included in Express Generator @4.16.3
+const passport = require('passport');
 
 // Imported express.Router() from './routes/
+const indexRouter = require('./routes/index');
+const usersRouter = require('./routes/users');
 const eatRouter = require('./routes/eatRouter');
 const servicesRouter = require('./routes/servicesRouter');
 const shopRouter = require('./routes/shopRouter');
@@ -17,13 +20,10 @@ const stayRouter = require('./routes/stayRouter');
 
 const mongoose = require('mongoose');
 
-const url = 'mongodb://localhost:27017/visitGirdwood';
-
+const url = config.url;
 const connect = mongoose.connect(url, {
-  // useCreateIndex: true,
-  // -- not supported
-  // useFindAndModify: false,
-  // -- not supported
+  // useCreateIndex: true, <-- options not supported
+  // useFindAndModify: false, <-- options not supported
   useNewUrlParser: true,
   useUnifiedTopology: true,
 });
@@ -33,23 +33,52 @@ connect.then(
   (err) => console.log(err)
 );
 
-const hostname = 'localhost';
-const PORT = process.env.PORT || 3000;
+const app = express();
+
+app.all('*', (req, res, next) => {
+  if (req.secure) {
+    return next();
+  } else {
+    console.log(
+      `Redirecting to: https://${req.hostname}:${app.get('secPort')}${req.url}`
+    );
+    res.redirect(
+      301,
+      `https://${req.hostname}:${app.get('secPort')}${req.url}`
+    );
+  }
+});
+
+// const hostname = 'localhost'; <-- no longer used
+// const PORT = process.env.PORT || 3000;
+
+// view engine setup
+app.set('views', path.join(__dirname, 'views'));
+app.set('view engine', 'jade');
 
 app.use(logger('dev'));
+app.use(express.json());
+app.use(express.urlencoded({ extended: false }));
 
 // const server = http.createServer(app);
+
+app.use(passport.initialize());
+
+app.use('/', indexRouter);
+app.use('/users', usersRouter);
+
+// app.get('/', (req, res) => {
+//   res.setHeader('Content-Type', 'text/plain');
+//   res.status(200).send('Testing... Testing...');
+// });
+
+app.use(express.static(path.join(__dirname, 'public')));
 
 // Assign routers to routes
 app.use('/eat', eatRouter);
 app.use('/services', servicesRouter);
 app.use('/shop', shopRouter);
 app.use('/stay', stayRouter);
-
-app.get('/', (req, res) => {
-  res.setHeader('Content-Type', 'text/plain');
-  res.status(200).send('Testing... Testing...');
-});
 
 // Catch 404 and forward to error handler -- included in Express Generator @4.16.1
 app.use((req, res, next) => {
@@ -63,10 +92,12 @@ app.use((err, req, res, next) => {
   res.locals.error = req.app.get('env') === 'development' ? err : {};
 
   // Render the error page
-  res.status(err.status || 500);
+  res.status = err.status || 500; // <--- TypeError: res.status is not a function
   res.render('error');
 });
 
-app.listen(PORT, hostname, () => {
-  console.log(`Server is running at http://${hostname}:${PORT}/`);
-});
+// app.listen(PORT, hostname, () => {
+//   console.log(`Server is running at http://${hostname}:${PORT}/`);
+// });
+
+module.exports = app;
