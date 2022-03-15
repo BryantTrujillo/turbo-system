@@ -15,6 +15,22 @@ const ratingSchema = new Schema(
   }
 );
 
+const commentSchema = new Schema(
+  {
+    text: {
+      type: String,
+      required: true,
+    },
+    author: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: 'User',
+    },
+  },
+  {
+    timpestamps: true,
+  }
+);
+
 const entitySchema = new Schema(
   {
     name: {
@@ -22,11 +38,11 @@ const entitySchema = new Schema(
       required: true,
     },
     category: {
-      type: String,
-      required: true,
+      type: Array,
+      required: false,
     },
     subcategory: {
-      type: String,
+      type: Array,
       required: false,
     },
     description: {
@@ -44,6 +60,7 @@ const entitySchema = new Schema(
       required: true,
     },
     rating: [ratingSchema],
+    comments: [commentSchema],
     phone: {
       type: Number,
       required: true,
@@ -124,7 +141,7 @@ const entitySchema = new Schema(
     },
     isSeasonal: {
       type: Boolean,
-      required: true,
+      default: false,
     },
     hours: {
       monday: {
