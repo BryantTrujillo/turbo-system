@@ -22,10 +22,10 @@ const mongoose = require('mongoose');
 
 const url = config.url;
 const connect = mongoose.connect(url, {
-  // useCreateIndex: true, <-- options not supported
-  // useFindAndModify: false, <-- options not supported
-  useNewUrlParser: true,
-  useUnifiedTopology: true,
+  // useCreateIndex: true, <-- option not supported as of Mongoose 6, default set to true
+  // useFindAndModify: false, <-- option not supported as of Mongoose 6, default set to false
+  useNewUrlParser: true, // <-- option now depricated as of Mongoose 6, default set to true
+  useUnifiedTopology: true, // <-- option now depricated as of Mongoose 6, default set to true
 });
 
 connect.then(
