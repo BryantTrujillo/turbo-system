@@ -10,7 +10,7 @@ eatRouter
   .route('/')
   .options(cors.corsWithOptions, (req, res) => res.sendStatus(200))
   .get(cors.cors, (req, res, next) => {
-    Entity.find()
+    Entity.find({ category: { $elemMatch: { $eq: 'isEat' } } })
       .populate('comments.author')
       .then((entities) => {
         // console.log(req.body) <-- for testing
@@ -194,7 +194,7 @@ eatRouter
               .catch((err) => next(err));
           } else {
             const err = new Error('You are not the author of this comment!');
-            res.statusCode = 403;
+            err.status = 403;
             return next(err);
             // res.end(); <-- no longer used
           }
@@ -230,7 +230,7 @@ eatRouter
               .catch((err) => next(err));
           } else {
             const err = new Error('You are not the author of this comment!');
-            res.statusCode = 403;
+            err.status = 403;
             return next(err);
             // res.end(); <-- no longer used
           }

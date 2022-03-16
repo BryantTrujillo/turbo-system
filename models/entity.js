@@ -1,20 +1,6 @@
 const mongoose = require('mongoose');
 const Schema = mongoose.Schema;
 
-const ratingSchema = new Schema(
-  {
-    rating: {
-      type: Number,
-      required: true,
-      min: 1,
-      max: 5,
-    },
-  },
-  {
-    timestamps: true,
-  }
-);
-
 const commentSchema = new Schema(
   {
     text: {
@@ -24,6 +10,12 @@ const commentSchema = new Schema(
     author: {
       type: mongoose.Schema.Types.ObjectId,
       ref: 'User',
+    },
+    rating: {
+      type: Number,
+      required: true,
+      min: 1,
+      max: 5,
     },
   },
   {
@@ -59,7 +51,6 @@ const entitySchema = new Schema(
       type: String,
       required: true,
     },
-    rating: [ratingSchema],
     comments: [commentSchema],
     phone: {
       type: Number,
