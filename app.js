@@ -21,12 +21,15 @@ const stayRouter = require('./routes/stayRouter');
 const mongoose = require('mongoose');
 
 const url = config.url;
-const connect = mongoose.connect(url, {
+const connect = mongoose.connect(
+  url
+  // , {
   // useCreateIndex: true, <-- option not supported as of Mongoose 6, default set to true
   // useFindAndModify: false, <-- option not supported as of Mongoose 6, default set to false
-  useNewUrlParser: true, // <-- option now depricated as of Mongoose 6, default set to true
-  useUnifiedTopology: true, // <-- option now depricated as of Mongoose 6, default set to true
-});
+  // useNewUrlParser: true, <-- option now depricated as of Mongoose 6, default set to true
+  // useUnifiedTopology: true, <-- option now depricated as of Mongoose 6, default set to true
+  // }
+);
 
 connect.then(
   () => console.log('Connected correctly to server'),
