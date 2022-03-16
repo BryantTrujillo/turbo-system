@@ -1,7 +1,8 @@
 const express = require('express');
 const path = require('path');
 
-const config = require('./config');
+const { mongoConfig } = require('./config');
+const { config } = require('./config');
 
 // Additional Express middleware
 const logger = require('morgan');
@@ -9,6 +10,8 @@ const createError = require('http-errors');
 // const errorHandler = require('errorhandler')
 // -- opted to use 'http-errors' included in Express Generator @4.16.3
 const passport = require('passport');
+
+const { auth } = require('express-openid-connect');
 
 // Imported express.Router() from './routes/
 const indexRouter = require('./routes/index');
@@ -20,7 +23,7 @@ const stayRouter = require('./routes/stayRouter');
 
 const mongoose = require('mongoose');
 
-const url = config.url;
+const url = mongoConfig.mongoUrl;
 const connect = mongoose.connect(
   url
   // , {
@@ -66,6 +69,8 @@ app.use(express.urlencoded({ extended: false }));
 // const server = http.createServer(app);
 
 app.use(passport.initialize());
+
+app.use(auth(config));
 
 app.use('/', indexRouter);
 app.use('/users', usersRouter);

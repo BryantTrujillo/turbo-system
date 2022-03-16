@@ -4,6 +4,8 @@ const passport = require('passport');
 const authenticate = require('../authenticate');
 const cors = require('./cors');
 
+const { requiresAuth } = require('express-openid-connect');
+
 const router = express.Router();
 
 /* GET users listing. */
@@ -84,6 +86,10 @@ router.get('/logout', cors.corsWithOptions, (req, res, next) => {
     res.status = 401;
     return next(err);
   }
+});
+
+router.get('/profile', requiresAuth(), (req, res) => {
+  res.send(JSON.stringify(req.oidc.user));
 });
 
 module.exports = router;
